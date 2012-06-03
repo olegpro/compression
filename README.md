@@ -4,7 +4,7 @@ compression
 JS and CSS files compress
 
 
-==========================
+## Пример использования для MODx Evolution
 require_once MODX_BASE_PATH . "assets/plugins/compression/compression.php"; 
 
 $js_dirs      = array('assets/templates/aqwella/js/', 'assets/templates/aqwella/js/fancybox/fancybox/');
