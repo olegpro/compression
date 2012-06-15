@@ -40,20 +40,23 @@ class compression {
         foreach($this->css_dirs as $css_dirs){
             foreach(scandir($this->home_dir.$css_dirs) as $file) {
                 if(preg_match('/\.css$/',$file)) {
-                    if(!preg_match('/ie(\d)?/',$file)) {
+                    if(!preg_match('/ie(\d)?/',$file) && !preg_match('/print/',$file)) {
                         $sections['css'][$this->mdir.'all.css'][] = $css_dirs.$file;
                     }
                 }
             }
         }
-
-        //echo '<pre>';print_r($sections);echo '</pre>';
-
+        
+		if(isset($_COOKIE['debug'])){
+			echo '<pre>';print_r($sections);echo '</pre>';
+            $this->error('DEBUG');
+		}
+		
         foreach($sections as $section => $data) {
             foreach($data as $target => $files) {
-                if(($modified = @filemtime($target)) !== false) {
+                if(($modified = @filemtime($this->home_dir.$target)) !== false) {
                     foreach($files as $file) {
-                        if(is_file($file) && (int)@filemtime($file) > $modified) {
+                        if(is_file($file) && (int)@filemtime($this->home_dir.$file) > $modified) {
                             if($section === 'css') {
                                 $this->css($target,$files);
                             } else {
@@ -99,10 +102,10 @@ class compression {
         $merged = '';
 
         foreach($files as $file) {
-            if(($content = @file_get_contents($file)) !== false) {
+            if(($content = @file_get_contents($this->home_dir.$file)) !== false) {
                 $merged .= $content."\n";
             } else {
-                $this->error(sprintf('Cannot read file: %s', $file));
+                $this->error(sprintf('Cannot read file: %s', $this->home_dir.$file));
             }
         }
 
@@ -110,10 +113,10 @@ class compression {
     }
 
     private function write($target,$content) {
-        if(@file_put_contents($target,$content) !== false) {
+        if(@file_put_contents($this->home_dir.$target,$content) !== false) {
             @chmod($target,0666);
         } else {
-            $this->error(sprintf('Cannot write file: %s', $target));
+            $this->error(sprintf('Cannot write file: %s', $this->home_dir.$target));
         }
     }
     
