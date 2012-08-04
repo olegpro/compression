@@ -40,7 +40,7 @@ class compression {
         foreach($this->css_dirs as $css_dirs){
             foreach(scandir($this->home_dir.$css_dirs) as $file) {
                 if(preg_match('/\.css$/',$file)) {
-                    if(!preg_match('/ie(\d)?/',$file) && !preg_match('/print/',$file)) {
+                    if(!preg_match('/ie(\d)*/',strtolower($file)) && !preg_match('/print/',strtolower($file))) {
                         $sections['css'][$this->mdir.'all.css'][] = $css_dirs.$file;
                     }
                 }
